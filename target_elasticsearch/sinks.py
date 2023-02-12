@@ -1,11 +1,11 @@
-import elasticsearch
+import opensearchpy
 import jinja2
 
 from typing import List, Dict, Optional, Union, Any, Tuple, Set
 
 import jsonpath_ng
 import singer_sdk.io_base
-from elasticsearch.helpers import bulk
+from opensearchpy.helpers import bulk
 from singer_sdk import PluginBase
 from singer_sdk.sinks import BatchSink
 
@@ -152,7 +152,7 @@ class ElasticSink(BatchSink):
         for index in indices:
             try:
                 self.client.indices.create(index=index)
-            except elasticsearch.exceptions.RequestError as e:
+            except opensearchpy.exceptions.RequestError as e:
                 if e.error == "resource_already_exists_exception":
                     self.logger.debug("index already created skipping creation")
                 else:  # Other exception - raise it
@@ -170,12 +170,12 @@ class ElasticSink(BatchSink):
         self.create_indices(distinct_indices)
         return updated_records
 
-    def _authenticated_client(self) -> elasticsearch.Elasticsearch:
+    def _authenticated_client(self) -> opensearchpy.OpenSearch:
         """
         _authenticated_client generates a newly authenticated elasticsearch client
         attempting to support all auth permutations and ssl concerns
         https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/connecting.html
-        @return: elasticsearch.Elasticsearch
+        @return: opensearch.OpenSearch
         """
         config = {}
         scheme = self.config[SCHEME]
@@ -194,7 +194,7 @@ class ElasticSink(BatchSink):
         else:
             self.logger.info("using default elastic search connection config")
 
-        return elasticsearch.Elasticsearch(**config)
+        return opensearchpy.OpenSearch(**config)
 
     def write_output(self, records):
         """
@@ -207,7 +207,7 @@ class ElasticSink(BatchSink):
         self.logger.debug(records)
         try:
             bulk(self.client, records)
-        except elasticsearch.helpers.BulkIndexError as e:
+        except opensearchpy.helpers.BulkIndexError as e:
             self.logger.error(e.errors)
 
     def process_batch(self, context: Dict[str, Any]) -> None:
