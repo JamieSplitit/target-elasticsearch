@@ -10,6 +10,15 @@
 Some target development because I am currently hacking together something together with a bash script
 Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
 
+## Custom setup
+Fork created to allow version 6.X of elasticsearch python package to be used for compatiability with cluster version.
+- install with `meltano add --custom loader target-elasticsearch`
+  - namespace: target-elasticsearch
+  - pip_url: https://github.com/JamieSplitit/target-elasticsearch.git
+  - executable name: target-elasticsearch
+  - settings: 
+`scheme,host,port,username,password,bearer_token:password,api_key_id,api_key:password,ssl_ca_file:file,index_format,index_schema_fields:object,metadata_fields:object,stream_maps:object,stream_map_config:object,flattening_enabled:boolean,flattening_max_depth:integer`
+
 ## Video
 
 [![video](http://img.youtube.com/vi/k6yr8P1f93U/0.jpg)](https://www.youtube.com/watch?v=k6yr8P1f93U "target")
